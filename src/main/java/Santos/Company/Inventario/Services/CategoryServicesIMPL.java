@@ -1,6 +1,8 @@
 package Santos.Company.Inventario.Services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,37 @@ public class CategoryServicesIMPL implements ICategoryService{
         }
 
         return new ResponseEntity <>(response, HttpStatus.OK);
+    }
+
+    //METODO DE BUSQUEDA POR ID
+    @Transactional(readOnly = true)
+    @Override
+    public ResponseEntity<CategoryResponseRest> searchById(Long id) {
+        
+        CategoryResponseRest response = new CategoryResponseRest();
+        List<Category> list = new ArrayList<>();
+
+        try {
+            
+            Optional<Category> category = categoryDao.findById(id);
+            if(category.isPresent()){
+                list.add(category.get());
+                response.getCategoryResponse().setCategory(list);
+                response.setMetadata("Respuesta ok", "00", "Respuesta exitosa");
+            }
+            else{
+            response.setMetadata("Respuesta No ok", "-1", "Error al consultar por id");
+            return new ResponseEntity <>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        } catch (Exception e) {
+
+            response.setMetadata("Respuesta No ok", "-1", "Error al consultar");
+            e.getStackTrace();
+
+            return new ResponseEntity <>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
