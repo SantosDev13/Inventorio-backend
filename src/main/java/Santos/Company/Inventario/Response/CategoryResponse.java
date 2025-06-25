@@ -1,13 +1,13 @@
 package Santos.Company.Inventario.Response;
 
 import java.util.List;
-import java.util.Locale;
 
+import Santos.Company.Inventario.Model.Category;
 import lombok.Data;
 
 @Data
 public class CategoryResponse {
 
-    private List<Locale.Category> category;
+    private List<Category> category;
 
 }
