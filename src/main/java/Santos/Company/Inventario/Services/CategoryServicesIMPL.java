@@ -91,7 +91,49 @@ public class CategoryServicesIMPL implements ICategoryService{
                 list.add(categorySaved);
                 response.getCategoryResponse().setCategory(list);
                 response.setMetadata("Respuesta ok", "00", "Respuesta exitosa");
+            }else{
+            response.setMetadata("Respuesta No ok", "-1", "Error al guardar");
+            return new ResponseEntity <>(response, HttpStatus.BAD_REQUEST);
             }
+            
+        } catch (Exception e) {
+            response.setMetadata("Respuesta No ok", "-1", "Error al guardar la categoria");
+            e.getStackTrace();
+
+            return new ResponseEntity <>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<CategoryResponseRest> update(Category category, Long id) {
+        CategoryResponseRest response = new CategoryResponseRest();
+        List<Category> list = new ArrayList<>();
+
+        try {
+            
+            Optional<Category> categorySearch = categoryDao.findById(id);
+            if(categorySearch.isPresent()){
+                //se procederá a actualizar el registro
+                categorySearch.get().setName(category.getName());
+                categorySearch.get().setDescription(category.getDescription());
+
+                Category categoryToUpdate = categoryDao.save(categorySearch.get());
+
+                if(categoryToUpdate !=null){
+                    list.add(categoryToUpdate);
+                    response.getCategoryResponse().setCategory(list);
+                    response.setMetadata("RESPUESTA OK ", "00", "CATEGORIA ACTUALIZADA");
+                }else{
+                    response.setMetadata("Respuesta No ok", "-1", "Categoria no actualizada");
+                    return new ResponseEntity <>(response, HttpStatus.BAD_REQUEST);
+                }
+            } else{
+            response.setMetadata("Respuesta No ok", "-1", "Categoria no encontrada");
+            return new ResponseEntity <>(response, HttpStatus.NOT_FOUND);
+            }
+
             
         } catch (Exception e) {
             response.setMetadata("Respuesta No ok", "-1", "Error al guardar la categoria");
