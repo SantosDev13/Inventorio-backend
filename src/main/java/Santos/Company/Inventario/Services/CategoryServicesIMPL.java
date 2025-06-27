@@ -20,6 +20,7 @@ public class CategoryServicesIMPL implements ICategoryService{
     @Autowired
     ICategoryDao categoryDao;
 
+    //BUSQUEDA GENERAL
     @Transactional(readOnly = true)
     @Override
     public ResponseEntity<CategoryResponseRest> search() {
@@ -60,7 +61,7 @@ public class CategoryServicesIMPL implements ICategoryService{
             }
             else{
             response.setMetadata("Respuesta No ok", "-1", "Error al consultar por id");
-            return new ResponseEntity <>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity <>(response, HttpStatus.NOT_FOUND);
             }
 
         } catch (Exception e) {
@@ -69,6 +70,34 @@ public class CategoryServicesIMPL implements ICategoryService{
             e.getStackTrace();
 
             return new ResponseEntity <>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    //Guardar las categorias
+    @Transactional
+    @Override
+    public ResponseEntity<CategoryResponseRest> save(Category category) {
+        
+        CategoryResponseRest response = new CategoryResponseRest();
+        List<Category> list = new ArrayList<>();
+
+        try {
+            
+            Category categorySaved =categoryDao.save(category);
+
+            if(categorySaved != null){
+                list.add(categorySaved);
+                response.getCategoryResponse().setCategory(list);
+                response.setMetadata("Respuesta ok", "00", "Respuesta exitosa");
+            }
+            
+        } catch (Exception e) {
+            response.setMetadata("Respuesta No ok", "-1", "Error al guardar la categoria");
+            e.getStackTrace();
+
+            return new ResponseEntity <>(response, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

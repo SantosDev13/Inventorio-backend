@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import Santos.Company.Inventario.Model.Category;
 import Santos.Company.Inventario.Response.CategoryResponseRest;
 import Santos.Company.Inventario.Services.ICategoryService;
+
 
 
 
@@ -31,6 +35,12 @@ public class CategoryRestController {
     @GetMapping("/categories/{id}")
     public ResponseEntity<CategoryResponseRest> searchById(@PathVariable Long id){
         ResponseEntity<CategoryResponseRest> response = service.searchById(id);
+        return response;
+    }
+    
+    @PostMapping("/categories")
+    public ResponseEntity<CategoryResponseRest> save (@RequestBody Category category) {
+        ResponseEntity<CategoryResponseRest> response = service.save(category);
         return response;
     }
     
